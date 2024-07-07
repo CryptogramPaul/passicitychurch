@@ -1,0 +1,70 @@
+.fc-event-main {
+    cursor: pointer !important;
+    /* or any other cursor value */
+}
+
+.fc-event-title {
+    cursor: pointer !important;
+    /* or any other cursor value */
+}
+
+a.bg-info,
+a.bg-danger, a.bg-primary ,a.badge {
+    cursor: pointer;
+}
+
+/* a.bg-danger {
+    cursor: pointer;
+} */
+
+@media print {
+    .table td {
+        background-color: transparent !important;
+      }
+}
+
+
+#LoadCalendarHere {
+    width: 100% !important;
+    height: 80vh !important; /* Adjust height as needed */    
+}
+
+.fc { /* FullCalendar main container */
+    max-width: 100% !important;
+    max-height: 100% !important;
+}
+
+.custom-mt{
+    margin-top: 2rem;
+}
+.recently-opened {
+    margin-bottom: 10px;
+}
+.recently-opened span {
+    margin-left: 10px;
+    cursor: pointer;
+}
+.remove-icon {
+    /* max-height: fit-content; */
+    align-items: center;
+    padding-left: 5px;
+    /* padding-top: 10px; */
+    cursor: pointer;
+    /* color: red; */
+}
+.recenty-opened-text{
+    /* font-size: 14px; */
+    /* font-weight: 600; */
+    color: #07adee;
+}
+.tab-bottom-line {
+    border-bottom: 2px solid rgb(5, 181, 235);;
+    /* border-image: linear-gradient(to right, rgb(104, 74, 74), blue); */
+    /* border-image-slice: 1; */
+    padding: 0;
+  }
+.bottom-line {
+    border-bottom: 1px solid rgb(150, 147, 147);
+}
+
+
