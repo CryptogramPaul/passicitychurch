@@ -1,15 +1,17 @@
 <?php
     require_once 'database/connection.php';
     
-    if (isset($_COOKIE['userid'])) {
-      $id = $_COOKIE['userid'];
+    if (isset($_COOKIE['customer_id']) ) {
+        if ($_COOKIE['user_type'] == "Client"){
+            $id = $_COOKIE['customer_id'];
 
-      $sql_user = $conn->prepare("SELECT CONCAT_WS(' ', a.firstname, a.middlename, a.lastname) as name, a.contact_no, a.email_address
-                FROM customer a
-                WHERE a.customer_id = ?");
-      $sql_user->execute([$id]);
-      $user = $sql_user->fetch();
-
+            $sql_user = $conn->prepare("SELECT CONCAT_WS(' ', a.firstname, a.middlename, a.lastname) as name, a.contact_no, a.email_address
+                        FROM customer a
+                        WHERE a.customer_id = ?");
+            $sql_user->execute([$id]);
+            $user = $sql_user->fetch();
+        }
+       
     }
   
 ?>
@@ -25,7 +27,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>Saint William Parish Church</title>
+    <title> St William Parish Online Church Services`</title>
     <link rel="icon" href="images/passi-logo.png" type="image/x-icon">
 
     <link rel="icon" href="images/passi-logo.png" type="image/x-icon">
@@ -68,7 +70,7 @@
 
 #calendar {
     height: 100vh !important;
-    
+
 }
 
 ._card {
@@ -165,14 +167,14 @@
                                     <a class="nav-link menu-link" target_id="#about">About</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link menu-link" target_id="#sacraments">Sacraments</a>
+                                    <a class="nav-link menu-link" target_id="#sacraments">Parish Transactions</a>
                                 </li>
                                 <!-- <li class="nav-item">
                                     <a class="nav-link menu-link" target_id="#contact">Contact Us</a>
                                 </li> -->
 
                                 <?php
-                                   if (!isset($_COOKIE['userid'])) {
+                                   if (!isset($_COOKIE['customer_id'])) {
                                 ?>
                                 <li class="nav-item">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
@@ -186,7 +188,10 @@
                                         <?php echo $user['name'] ?> <i class="fa fa-user-circle"></i>
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <!-- <li><a class="dropdown-item" href="#">User Account Settings</a></li> -->
+                                        <li><a class="dropdown-item" data-bs-toggle="modal"
+                                                data-bs-target="#sign_up_modal"
+                                                onclick="SignUpModal(`<?php echo $_COOKIE['customer_id']?>`, 1)"
+                                                href="#">User Profile</a></li>
                                         <li><a class="dropdown-item" data-bs-toggle="offcanvas" href="#offcanvasExample"
                                                 role="button" aria-controls="offcanvasExample"
                                                 onclick="ShowTransactionCanvas()">Transactions</a></li>
@@ -212,7 +217,7 @@
                             <br>
                             <br>
                             <h1>
-                                Saint William Parish Church
+                                St William Parish Online Church Services
                             </h1>
                             <!-- <h4>Online Appointment</h4> -->
                             <h4 class="text-white">
@@ -242,73 +247,104 @@
     <section class="service_section layout_padding section" id="sacraments">
         <div class="container ">
             <div class="heading_container heading_center">
-                <h2> SACRAMENTS </h2>
+                <h2> PARISH TRANSACTIONS </h2>
             </div>
             <div class="row">
-                <div class="col-sm-6 col-md-4 mx-auto">
+                <div class="col-lg-3">
                     <div class="box ">
-                        <!-- <div class="img-box">
-            <img src="images/s1.png" alt="" />
-          </div> -->
                         <div class="detail-box">
                             <h5>
                                 BAPTISM
                             </h5>
                             <p>
-                                when looking at its layout. The point of using Lorem Ipsum is
-                                that it has a more-or-less normal
+                                Baptism is a Christian sacrament that symbolizes the admission of a person into the
+                                Christian community and their belief in Christ.
                             </p>
                             <br>
 
                             <a href="#" data-bs-toggle="modal"
-                                data-bs-target="#<?php echo !isset($_COOKIE['userid']) ? 'login_modal':'show_baptism' ?>"
-                                <?php if (isset($_COOKIE['userid'])) { ?> onclick="ShowBaptismModal(null,0)" <?php }?>>
+                                data-bs-target="#<?php echo !isset($_COOKIE['customer_id']) ? 'login_modal':'show_baptism' ?>"
+                                <?php if (isset($_COOKIE['customer_id'])) { ?> onclick="ShowBaptismModal(null,null,0)"
+                                <?php }?>>
                                 Set Schedule
                             </a>
+                            <br>
+
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#sacramentrate"
+                                onclick="ShowSacramentRate('Baptism')">Rates</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-4 mx-auto">
+                <div class="col-lg-3">
                     <div class="box ">
-                        <!-- <div class="img-box">
-            <img src="images/s2.png" alt="" />
-          </div> -->
                         <div class="detail-box">
                             <h5>
                                 MARRIAGE
                             </h5>
                             <p>
-                                when looking at its layout. The point of using Lorem Ipsum is
-                                that it has a more-or-less normal
+                                Marriage is a legally or culturally recognized union between two people, also known as
+                                spouses, that creates rights and obligations.
                             </p>
                             <br>
                             <a href="#" data-bs-toggle="modal"
-                                data-bs-target="#<?php echo !isset($_COOKIE['userid']) ? 'login_modal':'show_wedding' ?>"
-                                <?php if (isset($_COOKIE['userid'])) { ?> onclick="ShowWeddingModal(null,0)" <?php }?>>
+                                data-bs-target="#<?php echo !isset($_COOKIE['customer_id']) ? 'login_modal':'show_wedding' ?>"
+                                <?php if (isset($_COOKIE['customer_id'])) { ?> onclick="ShowWeddingModal(null,null,0)"
+                                <?php }?>>
                                 Set Schedule
                             </a>
+                            <br>
+
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#sacramentrate"
+                                onclick="ShowSacramentRate('Wedding')">Rates</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-4 mx-auto">
+                <div class="col-lg-3">
                     <div class="box">
-                        <!-- <div class="img-box">
-            <img src="images/s3.png" alt="" />
-          </div> -->
                         <div class="detail-box">
                             <h5>
                                 BURIAL
                             </h5>
                             <p>
-                                when looking at its layout. The point of using Lorem Ipsum is
-                                that it has a more-or-less normal
+                                Burial is the act of placing a deceased person's remains in the ground, a tomb, or the
+                                water, or exposing them to the element or animals.
                             </p>
                             <br>
                             <a href="#" data-bs-toggle="modal"
-                                data-bs-target="#<?php echo !isset($_COOKIE['userid']) ? 'login_modal':'show_burial' ?>"
-                                <?php if (isset($_COOKIE['userid'])) { ?> onclick="ShowBurialModal(null,0)" <?php }?>>
+                                data-bs-target="#<?php echo !isset($_COOKIE['customer_id']) ? 'login_modal':'show_burial' ?>"
+                                <?php if (isset($_COOKIE['customer_id'])) { ?> onclick="ShowBurialModal(null,null,0)"
+                                <?php }?>>
                                 Set Schedule
                             </a>
+                            <br>
+
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#sacramentrate"
+                                onclick="ShowSacramentRate('Burial')">Rates</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="box">
+                        <div class="detail-box">
+                            <h5>
+                                INTENTIONS
+                            </h5>
+                            <p>
+                                Mass intentions refer to the particular purpose for which a specific Mass is offered.
+                                This may be to honor God or thank him for blessings received.
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </p>
+                            <br>
+                            <a href="#" data-bs-toggle="modal"
+                                data-bs-target="#<?php echo !isset($_COOKIE['customer_id']) ? 'login_modal':'show_intentions' ?>"
+                                <?php if (isset($_COOKIE['customer_id'])) { ?>
+                                onclick="ShowIntentionsModal(null,null,0)" <?php }?>>
+                                Set Schedule
+                            </a>
+                            <br>
+
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#sacramentrate"
+                                onclick="ShowSacramentRate('Intentions')">Rates</a>
                         </div>
                     </div>
                 </div>
@@ -347,7 +383,7 @@
         </div>
     </section>
 
-   <!--  <section class="contact_section layout_padding section" id="contact">
+    <!--  <section class="contact_section layout_padding section" id="contact">
         <div class="container">
             <div class="heading_container">
                 <h2>
@@ -359,18 +395,18 @@
                     <form id="FormContactUs">
                         <div class="form-floating">
                             <input type="text" class="form-control text-black " required id="contact_name"
-                                value="<?php echo !isset($_COOKIE['userid']) ? '':$user['name'] ?>" placeholder="Name">
+                                value="<?php echo !isset($_COOKIE['customer_id']) ? '':$user['name'] ?>" placeholder="Name">
                             <label for="name">Name</label>
                         </div>
                         <div class="form-floating">
                             <input type="number" class="form-control text-black" required id="contact_number"
-                                value="<?php echo !isset($_COOKIE['userid']) ? '':$user['contact_no'] ?>"
+                                value="<?php echo !isset($_COOKIE['customer_id']) ? '':$user['contact_no'] ?>"
                                 placeholder="Phone Number">
                             <label for="contact_no">Phone Number</label>
                         </div>
                         <div class="form-floating mb-3">
                             <input type="email" class="form-control text-black" required id="email_address"
-                                value="<?php echo !isset($_COOKIE['userid']) ? '':$user['email_address'] ?>"
+                                value="<?php echo !isset($_COOKIE['customer_id']) ? '':$user['email_address'] ?>"
                                 placeholder="name@example.com">
                             <label for="email_address">Email address</label>
                         </div>
@@ -457,7 +493,7 @@
                                             <i class="fa fa-envelope" aria-hidden="true"></i>
                                         </div>
                                         <p>
-                                            parish@admin.passicitychurch.org
+                                            passicitychurch@gmail.com
                                         </p>
                                     </div>
                                 </a>
@@ -505,21 +541,51 @@
         </div>
     </form>
 
-    <form id="WeddingForm">
+    <form id="WeddingForm" enctype="multipart/form-data">
         <div class="modal fade" id="show_wedding" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable custom-modal-width" id="LoadWeddingModal">
+            <div class="modal-dialog modal-xl" id="LoadWeddingModal">
 
             </div>
         </div>
     </form>
+
+    <form id="IntentionsForm" enctype="multipart/form-data">
+        <div class="modal fade" id="show_intentions" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" id="LoadIntentionsModal">
+
+            </div>
+        </div>
+    </form>
+
+    <!-- Sign Up Modal -->
+    <form id="signUpForm">
+        <div class="modal fade" id="sign_up_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" id="LoadSignUpModal">
+            </div>
+        </div>
+    </form>
+
+    <div class="modal fade" id="sacramentrate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg" id="LoadSacramentRate">
+        </div>
+    </div>
+
+    <div class="modal fade" id="verification" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg" id="LoadVerificationCode">
+        </div>
+    </div>
 
     <!-- TRANSACTIONS -->
 
     <div class="offcanvas offcanvas-end w-75" tabindex="-1" id="offcanvasExample"
         aria-labelledby="offcanvasExampleLabel">
         <div class="offcanvas-header">
-            <h3 class="offcanvas-title" id="offcanvasExampleLabel">Transcations</h3>
+            <h3 class="offcanvas-title" id="offcanvasExampleLabel">Transactions</h3>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body" id="TranscationBody">
@@ -529,14 +595,8 @@
 
     <a id="scroll-to-top" href="#top" title="Scroll to Top">↑</a>
     </div>
-    <?php include'login/signup-modal.php' ?>
     <?php include'login/login.php' ?>
-
-    <!-- <div class="modal fade" id="show_modal" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" id="LoadModalHere">
-
-    </div>
-  </div> -->
+    <?php include'login/verification-modal.php' ?>
 
     <!-- end info_section -->
 

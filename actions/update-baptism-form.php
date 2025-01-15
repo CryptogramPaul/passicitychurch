@@ -28,6 +28,14 @@
     $sql_booking->execute([$baptism_id]);
     $result = $sql_booking->fetch();
     $booking_id = $result['booking_id'];
+
+    // if (isWeekend($baptism_date)) {
+    //     $caledar_day = "Weekends"; 
+    // } else {
+    //     $caledar_day = "Weekdays"; 
+    // }
+  
+    
     try {
         $conn->beginTransaction();
         
@@ -60,14 +68,41 @@
             $mother_lastname,
             $mother_firstname,
             $mother_middlename
-            ,$_COOKIE['userid'], 
+            ,$_COOKIE['customer_id'], 
             $baptism_id]);
         
-        $update_booking = $conn->prepare("UPDATE booking SET booking_date = ?, start_time = ?, booking_status = ?, customer_id = ?, baptism_id = ?, sacrament_type = ? WHERE booking_id = ?");
-        $update_booking->execute([$baptism_date,$timeOfBaptism,'Pending',$_COOKIE['userid'],$baptism_id,'Baptism',$booking_id]);	
+        $sql_getrates = $conn->prepare("SELECT * FROM rates WHERE sacrament_type = 'Baptism' AND calendar_day = 'All' ");
+        $sql_getrates->execute([]);
+        $fetch_rate = $sql_getrates->fetchAll();
 
-        $insert_sponsors = $conn->prepare("INSERT INTO sponsors (sacrament_id, sacrament_type, lastname, firstname, middlename, booking_id, customer_id)VALUES(?,?,?,?,?,?,?)");
-        $update_sponsors = $conn->prepare("UPDATE sponsors SET sacrament_id = ?, sacrament_type = ?, lastname = ?, firstname = ?, middlename = ?, booking_id = ?, customer_id = ? WHERE sponsor_id = ?");
+        $count_sponsors = 0;
+        foreach ($Sponsors as $key => $value) {
+            $id = $value['id'];
+            $lastname = $value['lastname'];
+            $firstname   = $value['firstname'];
+            $middlename     = $value['middlename'];
+
+            // if (!empty($id)) {
+            // }
+            $count_sponsors++;
+        }
+        
+        $total_amount = 0;
+        $total_sponsor = 0;
+        $sponsor_rate = 0;
+        foreach($fetch_rate as $key => $value) {
+            if ($value['rate_name'] == 'Sponsors') {
+                $total_sponsor = $value['amount_rate'] * $count_sponsors;
+                 $sponsor_rate = $value['amount_rate'];
+            }else{
+                $total_amount += $value['amount_rate'];
+            }
+        }
+        $total_amount_to_pay = $total_amount + $total_sponsor;
+        
+        $update_booking = $conn->prepare("UPDATE booking SET booking_date = ?, start_time = ?, booking_status = ?, customer_id = ?, baptism_id = ?, sacrament_type = ?, amount_to_pay = ? WHERE booking_id = ?");
+        $update_booking->execute([$baptism_date, $timeOfBaptism, 'Pending', $_COOKIE['customer_id'], $baptism_id, 'Baptism', $total_amount_to_pay, $booking_id]);	
+
         
         // INSERT SPONSORS
         foreach ($Sponsors as $key => $value) {
@@ -78,15 +113,31 @@
             
             $sql_sponsors = $conn->prepare("SELECT count(sponsor_id) FROM sponsors WHERE sponsor_id = ? ");
             $sql_sponsors->execute([$id]);	
+            // $sponsor = $sql_sponsors->fetch();
 
-            if($sql_sponsors->fetchColumn(0) > 0){
-                $update_sponsors->execute([$baptism_id, "Baptism", $lastname, $firstname, $middlename, $booking_id, $_COOKIE['userid'], $id]);
+            // if($sponsor['sponsor_id'] != $id ){
+            //     // $update_sponsors = $conn->prepare("UPDATE sponsors SET sacrament_id = ?, sacrament_type = ?, lastname = ?, firstname = ?, middlename = ?, booking_id = ?, customer_id = ?, amount = ? WHERE sponsor_id = ?");
+            //     // $update_sponsors->execute([$baptism_id, "Baptism", $lastname, $firstname, $middlename, $booking_id, $_COOKIE['customer_id'], $sponsor_rate, $id]);
+            //     echo 'insert';
+            // }else{
+            //     echo 'update';
+            //     // $insert_sponsors = $conn->prepare("INSERT INTO sponsors (sacrament_id, sacrament_type, lastname, firstname, middlename, booking_id, customer_id, amount)VALUES(?,?,?,?,?,?,?,?)");
+            //     // $insert_sponsors->execute([$baptism_id, "Baptism", $lastname, $firstname, $middlename, $booking_id, $_COOKIE['customer_id'], $sponsor_rate]);
+            // }
+            
+
+            if($sql_sponsors->fetchColumn(0) == 0){
+                // echo 'insert';
+                $insert_sponsors = $conn->prepare("INSERT INTO sponsors (sacrament_id, sacrament_type, lastname, firstname, middlename, booking_id, customer_id, amount)VALUES(?,?,?,?,?,?,?,?)");
+                $insert_sponsors->execute([$baptism_id, "Baptism", $lastname, $firstname, $middlename, $booking_id, $_COOKIE['customer_id'], $sponsor_rate]);
             }else{
-                $insert_sponsors->execute([$baptism_id, "Baptism", $lastname, $firstname, $middlename, $booking_id, $_COOKIE['userid']]);
+                $update_sponsors = $conn->prepare("UPDATE sponsors SET sacrament_id = ?, sacrament_type = ?, lastname = ?, firstname = ?, middlename = ?, booking_id = ?, customer_id = ?, amount = ? WHERE sponsor_id = ?");
+                $update_sponsors->execute([$baptism_id, "Baptism", $lastname, $firstname, $middlename, $booking_id, $_COOKIE['customer_id'], $sponsor_rate, $id]);
+                // echo 'update';
             }
-            // $insert_sponsors->execute([$baptism_id, "Baptism", $lastname, $firstname, $middlename, $booking_id, $_COOKIE['userid']]);
         }
-    
+                // exit();
+
         $conn->commit();
         echo "success";
     

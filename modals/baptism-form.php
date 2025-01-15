@@ -56,8 +56,7 @@
             <button type="button" class="btn-close float-end" data-bs-dismiss="modal" aria-label="Close"></button>
             <div class="row d-flex mb-4 align-items-center">
                 <div class="col-lg-2 col-12 text-center">
-                    <img src="images/passi-logo.png" alt="Parish Logo" class="img-fluid mb-2"
-                        style="max-width: 150px;">
+                    <img src="images/passi-logo.png" alt="Parish Logo" class="img-fluid mb-2" style="max-width: 150px;">
                 </div>
                 <div class="col-lg-10 col-12 text-center ">
                     <h2>St. William Parish</h2>
@@ -103,7 +102,7 @@
 
             <div class="row">
                 <div class="form-group col-6">
-                    <label for="baptism_date">Tentative Date of Baptism</label>
+                    <label for="baptism_date">Exact Date of Baptism</label>
                     <input type="date" class="form-control-plaintext" id="baptism_date"
                         value="<?php echo $operation == 0 ? date('Y-m-d'):$result['baptism_date']?>"
                         min="<?php echo date('Y-m-d')  ?>" required>
@@ -152,17 +151,17 @@
                         value="<?php echo $operation == 0 ?  '':$result['mother_lastname']?>" required>
                 </div>
             </div>
+            <?php
+                $sql_getrates = $conn->prepare("SELECT amount_rate FROM rates WHERE sacrament_type = 'Baptism' AND rate_name = 'Sponsors' ");
+                $sql_getrates->execute();
+                $rate = $sql_getrates->fetch();
+            ?>
             <div class="row d-flex justify-content-between">
-                <div class="col-6">
-                    <label for="">Sponsors: (Must be a Catholic)</label>
-
+                <div class="col-8">
+                    <label for="">Sponsors: (Must be a Catholic) &nbsp;
+                        <b><?php echo formatCurrency($rate['amount_rate']) ?> per sponsor.</b></label>
                 </div>
-                <div class="col-6 text-end">
-                    <a class="badge bg-primary text-white text-decoration-none badge-primary " onclick="AddSponsors()"
-                        title="Add Sponsors">
-                        <i class="fa fa-plus p-1"></i> Add Sponsors
-                    </a>
-                </div>
+              
             </div>
             <?php
                 if ($operation == 1) {
@@ -189,7 +188,8 @@
                         value="<?php echo $sponsor['lastname']?>" placeholder="Lastname" required>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <a class="badge bg-danger text-white text-decoration-none badge-danger "
-                        onclick="RemoveSponsor(`Baptism`,`<?php echo $result['id']?>`,`<?php echo $sponsor['sponsor_id']?>`, 1)" title="Delete">
+                        onclick="RemoveSponsor(`Baptism`,`<?php echo $result['id']?>`,`<?php echo $sponsor['sponsor_id']?>`, 1)"
+                        title="Delete">
                         <i class="fa fa-trash p-1"></i>
                     </a>
                 </div>
@@ -197,27 +197,35 @@
             <?php
                 } }
             ?>
-            <div class="row" id="sponsor_row"></div>
+            <div class="row" id="baptism_sponsor_row"></div>
         </div>
     </div>
     <div class="modal-footer">
+        <!-- <div class="col-2 text-start">
+            </div> -->
+        <!-- <a class="badge bg-primary text-white text-decoration-none badge-primary " onclick="AddSponsors()" -->
+        <a class="btn btn-success" onclick="AddSponsors('Baptism')"
+            title="Add Sponsors">
+            <i class="fa fa-plus p-1"></i> Add Sponsors
+        </a>
+            <!-- <button type="button" class="btn btn-primary" title="Add Sponsors" onclick="AddSponsors()>Add Sponsors</button> -->
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-primary">Confirm Booking</button>
     </div>
 </div>
 <script>
 $(document).ready(function() {
-    $("#BaptismForm").on("submit", function(e) {
-        e.preventDefault();
+    // $("#BaptismForm").on("submit", function(e) {
+    //     e.preventDefault();
 
-        if ($("#BaptismModal").attr('operation') == 0) {
-            SaveBaptismForm();
-        } else {
-            let baptism_id = $("#BaptismModal").attr('baptism_id');
-            UpdateBaptismForm(baptism_id);
-        }
-        return false
-    });
+    //     if ($("#BaptismModal").attr('operation') == 0) {
+    //         SaveBaptismForm();
+    //     } else {
+    //         let baptism_id = $("#BaptismModal").attr('baptism_id');
+    //         UpdateBaptismForm(baptism_id);
+    //     }
+    //     return false
+    // });
     let operation = `<?php echo $operation ?>`;
     if (operation == 0) {
         AddSponsors();

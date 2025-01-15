@@ -35,6 +35,12 @@
     $dateOfBurial       = sanitize_input($_POST['dateOfBurial']);
     $timeOfBurial       = sanitize_input($_POST['timeOfBurial']);
     // $complete_address = $barangay . ' ' . $municipality . ', ' . $province;
+    if (isWeekend($dateOfBurial)) {
+        $caledar_day = "Weekends"; 
+    } else {
+        $caledar_day = "Weekdays"; 
+    }
+
     try {
         $conn->beginTransaction();
         
@@ -72,21 +78,28 @@
         $insert_burial->execute([$burial_lastname,$burial_firstname,$burial_middlename,$contactNo,
                         $dateApplied,$dateOfBirth,$age,$gender,$address,$maritalStatus,$father,$mother,
                         $spouse,$noOfChildren,$childrenAlive,$childrenDead,$personResponsible,$relationship,
-                        $membership,$lastRites,$causeOfDeath,$dateOfDeath,$deathCertNo,$burialPermitNo,$cemetery,$dateOfBurial,$timeOfBurial,$_COOKIE['userid']]);
+                        $membership,$lastRites,$causeOfDeath,$dateOfDeath,$deathCertNo,$burialPermitNo,$cemetery,$dateOfBurial,$timeOfBurial,$_COOKIE['customer_id']]);
        
         $burial_id = $conn->lastInsertId();
 
-        $sql_getrates = $conn->prepare("SELECT total_rate FROM rates WHERE sacrament_type = 'Burial' ");
-        $sql_getrates->execute();
-        $rate = $sql_getrates->fetch();
-
+        $sql_getrates = $conn->prepare("SELECT * FROM rates WHERE sacrament_type = 'Burial' AND calendar_day = ? ");
+        $sql_getrates->execute([$caledar_day]);
+        $fetch_rate = $sql_getrates->fetchAll();
+        
+        $total_amount = 0;
+       
+        foreach($fetch_rate as $key => $value) {
+            $total_amount += $value['amount_rate'];
+        }
+        
         $insert_booking = $conn->prepare("INSERT INTO booking (booking_date, start_time, booking_status, customer_id, burial_id, sacrament_type, amount_to_pay) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $insert_booking->execute([$dateOfBurial, $timeOfBurial, 'Pending', $_COOKIE['userid'], $burial_id, 'Burial', $rate['total_rate'] ]);	
+        $insert_booking->execute([$dateOfBurial, $timeOfBurial, 'Pending', $_COOKIE['customer_id'], $burial_id, 'Burial', $total_amount ]);	
     
         $conn->commit();
         echo "success";
     
     } catch (PDOException $e) {
+        $conn->rollback();
         echo "Error!<br>Please Contact Our Management" . $e->getMessage();
     }
-?>  
+?>

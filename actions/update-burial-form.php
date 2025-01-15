@@ -42,6 +42,11 @@
     $result = $sql_booking->fetch();
     $booking_id = $result['booking_id'];
 
+    if (isWeekend($dateOfBurial)) {
+        $caledar_day = "Weekends"; 
+    } else {
+        $caledar_day = "Weekdays"; 
+    }
     try {
         $conn->beginTransaction();
         
@@ -79,12 +84,20 @@
         $update_burial->execute([$burial_lastname,$burial_firstname,$burial_middlename,$contactNo,
                         $dateApplied,$dateOfBirth,$age,$gender,$address,$maritalStatus,$father,$mother,
                         $spouse,$noOfChildren,$childrenAlive,$childrenDead,$personResponsible,$relationship,
-                        $membership,$lastRites,$causeOfDeath,$dateOfDeath,$deathCertNo,$burialPermitNo,$cemetery,$dateOfBurial,$timeOfBurial,$_COOKIE['userid'],$burial_id]);
+                        $membership,$lastRites,$causeOfDeath,$dateOfDeath,$deathCertNo,$burialPermitNo,$cemetery,$dateOfBurial,$timeOfBurial,$_COOKIE['customer_id'],$burial_id]);
        
-        // $burial_id = $conn->lastInsertId();
+        $sql_getrates = $conn->prepare("SELECT * FROM rates WHERE sacrament_type = 'Burial' AND calendar_day = ? ");
+        $sql_getrates->execute([$caledar_day]);
+        $fetch_rate = $sql_getrates->fetchAll();
+        
+        $total_amount = 0;
+       
+        foreach($fetch_rate as $key => $value) {
+            $total_amount += $value['amount_rate'];
+        }
 
-        $update_booking = $conn->prepare("UPDATE booking SET booking_date = ?, start_time = ?, booking_status = ?, customer_id = ?, burial_id = ?, sacrament_type = ? WHERE booking_id = ?");
-        $update_booking->execute([$dateOfBurial,$timeOfBurial,'Pending',$_COOKIE['userid'],$burial_id, 'Burial', $booking_id]);	
+        $update_booking = $conn->prepare("UPDATE booking SET booking_date = ?, start_time = ?, booking_status = ?, customer_id = ?, burial_id = ?, sacrament_type = ?, amount_to_pay = ? WHERE booking_id = ?");
+        $update_booking->execute([$dateOfBurial,$timeOfBurial,'Pending',$_COOKIE['customer_id'],$burial_id, 'Burial',  $total_amount, $booking_id]);	
     
         $conn->commit();
         echo "success";
@@ -92,4 +105,4 @@
     } catch (PDOException $e) {
         echo "Error!<br>Please Contact Our Management" . $e->getMessage();
     }
-?>  
+?>

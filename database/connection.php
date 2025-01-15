@@ -1,17 +1,17 @@
 <?php
-    // if(!defined('DB_SERVER')){
-    //     require_once("config.php");
-    // }
+    if(!defined('DB_SERVER')){
+        require_once("config.php");
+    }
 
-    // $servername = DB_SERVER;
-    // $username = DB_USERNAME;
-    // $password = DB_PASSWORD;
-    // $database = DB_NAME;
+    $servername = DB_SERVER;
+    $username = DB_USERNAME;
+    $password = DB_PASSWORD;
+    $database = DB_NAME;
     
-    $servername = 'localhost';
-    $username = "root";
-    $password = "";
-    $database = "passicitychurch";    
+    // $servername = 'localhost';
+    // $username = "root";
+    // $password = "";
+    // $database = "passicitychurch";    
     try {
         $conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
         // Set the PDO error mode to exception

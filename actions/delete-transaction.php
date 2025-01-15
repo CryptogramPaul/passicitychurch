@@ -31,6 +31,9 @@
 
             $delete_sponsor = $conn->prepare("DELETE FROM sponsors WHERE sacrament_id = ?");
             $delete_sponsor->execute([$id]);
+            
+            $delete_requirements = $conn->prepare("DELETE FROM requirements WHERE baptism_id = ?");
+            $delete_requirements->execute([$id]);
 
         }else if($type == 'Wedding'){
 
@@ -43,6 +46,21 @@
             $delete_sponsor = $conn->prepare("DELETE FROM sponsors WHERE sacrament_id = ?");
             $delete_sponsor->execute([$id]);
 
+            $delete_requirements = $conn->prepare("DELETE FROM requirements WHERE wedding_id = ?");
+            $delete_requirements->execute([$id]);
+            
+        }else if($type == 'Intentions'){
+            
+            $delete_booking = $conn->prepare("DELETE FROM booking WHERE intentions_id = ?");
+            $delete_booking->execute([$id]);
+    
+            $delete_intentions = $conn->prepare("DELETE FROM intentions WHERE id = ?");
+            $delete_intentions->execute([$id]);
+
+            $delete_intentions_details = $conn->prepare("DELETE FROM intentions_sub_details WHERE intentions_id = ?");
+            $delete_intentions_details->execute([$id]);
+
+           
         }
     
         $conn->commit();

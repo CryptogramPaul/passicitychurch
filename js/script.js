@@ -1,189 +1,62 @@
 $(document).ready(function () {
+  // SAVE CONTACTS
   $("#FormContactUs").on("submit", function (e) {
     e.preventDefault();
     SaveContactUs();
     return false;
   });
+
+  // SAVE BAPTISM FORM
+  $("#BaptismForm").on("submit", function (e) {
+    e.preventDefault();
+
+    if ($("#BaptismModal").attr("operation") == 0) {
+      SaveBaptismForm();
+    } else {
+      let baptism_id = $("#BaptismModal").attr("baptism_id");
+      UpdateBaptismForm(baptism_id);
+    }
+    return false;
+  });
+
+  // SAVE SACRAMENTS FORM
+  $("#SacramentsForm").on("submit", function (e) {
+    e.preventDefault();
+
+    if ($("#BurialModal").attr("operation") == 0) {
+      SaveBurialForm();
+    } else {
+      let burial_id = $("#BurialModal").attr("burial_id");
+      UpdateBurialForm(burial_id);
+    }
+    return false;
+  });
+
+  // SAVE WEDDING FORM
+  $("#WeddingForm").on("submit", function (e) {
+    e.preventDefault();
+
+    if ($("#WeddingModal").attr("operation") == 0) {
+      SaveWeddingForm();
+    } else {
+      let wedding_id = $("#WeddingModal").attr("wedding_id");
+      UpdateWedding(wedding_id);
+    }
+    return false;
+  });
+
+  $("#IntentionsForm").on("submit", function (e) {
+    e.preventDefault();
+
+    if ($("#IntentionsModal").attr("operation") == 0) {
+      SaveIntentionsForm();
+    } else {
+      let intentions_id = $("#IntentionsModal").attr("intentions_id");
+      UpdateIntentionsForm(intentions_id);
+    }
+    return false;
+  });
 });
-
-function SaveWeddingForm() {
-  let groom_firstname = $("#groom_firstname").val();
-  let groom_middlename = $("#groom_middlename").val();
-  let groom_lastname = $("#groom_lastname").val();
-  let bride_firstname = $("#bride_firstname").val();
-  let bride_middlename = $("#bride_middlename").val();
-  let bride_lastname = $("#bride_lastname").val();
-  let wedding_date = $("#wedding_date").val();
-  let timeOfWedding = $("#timeOfWedding").val();
-
-
-  let sponsor_arr = [];
-
-  $(".sponsor").each(function (data) {
-    let id = $(this).attr("counter");
-    let lastname = $("#sponsors_lastname" + id).val();
-    let firstname = $("#sponsors_firstname" + id).val();
-    let middlename = $("#sponsors_middlename" + id).val();
-
-    sponsor_arr.push({
-      id: id,
-      lastname: lastname,
-      firstname: firstname,
-      middlename: middlename,
-    });
-  });
-
-  let SponsorJson = JSON.stringify(sponsor_arr);
-
-  // $.post(
-  //   "actions/save-wedding-form.php",
-  //   {
-  //     groom_firstname: groom_firstname,
-  //     groom_middlename: groom_middlename,
-  //     groom_lastname: groom_lastname,
-  //     bride_firstname: bride_firstname,
-  //     bride_middlename: bride_middlename,
-  //     bride_lastname: bride_lastname,
-  //     wedding_date: wedding_date,
-  //     timeOfWedding: timeOfWedding,
-  //     SponsorJson: SponsorJson,
-  //   },
-  //   function (data) {
-  //     if (jQuery.trim(data) == "success") {
-  //       $("#show_wedding").modal("hide");
-  //       toastAlert("success", "Appointment created successfully.");
-  //       ShowTransactionCanvas();
-  //     } else {
-  //       toastAlert("warning", data);
-  //     }
-  //   }
-  // );
-}
-
-// function UpdateWeddingForm(wedding_id) {
-//   let groom_firstname = $("#groom_firstname").val();
-//   let groom_middlename = $("#groom_middlename").val();
-//   let groom_lastname = $("#groom_lastname").val();
-//   let bride_firstname = $("#bride_firstname").val();
-//   let bride_middlename = $("#bride_middlename").val();
-//   let bride_lastname = $("#bride_lastname").val();
-//   let wedding_date = $("#wedding_date").val();
-//   let timeOfWedding = $("#timeOfWedding").val();
-
-//   let sponsor_arr = [];
-
-//   $(".sponsor").each(function (data) {
-//     let id = $(this).attr("counter");
-//     let lastname = $("#sponsors_lastname" + id).val();
-//     let firstname = $("#sponsors_firstname" + id).val();
-//     let middlename = $("#sponsors_middlename" + id).val();
-
-//     sponsor_arr.push({
-//       id: id,
-//       lastname: lastname,
-//       firstname: firstname,
-//       middlename: middlename,
-//     });
-//   });
-
-//   let SponsorJson = JSON.stringify(sponsor_arr);
-
-//   var baptismal = $("#baptismal")[0].files[0];
-//   var confirmation_cert = $("#confirmation_cert")[0].files[0];
-//   var marriage_license = $("#marriage_license")[0].files[0];
-//   var marriage_cont = $("#marriage_cont")[0].files[0];
-
-//   // console.log(baptismal);
-//   // console.log(confirmation_cert);
-//   // console.log(marriage_license);
-//   // console.log(marriage_cont);
-
-//   $.post(
-//     "actions/update-wedding-form.php",
-//     {
-//       groom_firstname: groom_firstname,
-//       groom_middlename: groom_middlename,
-//       groom_lastname: groom_lastname,
-//       bride_firstname: bride_firstname,
-//       bride_middlename: bride_middlename,
-//       bride_lastname: bride_lastname,
-//       wedding_date: wedding_date,
-//       timeOfWedding: timeOfWedding,
-//       SponsorJson: SponsorJson,
-//       wedding_id: wedding_id,
-//       baptismal: baptismal,
-//       confirmation_cert: confirmation_cert,
-//       marriage_license: marriage_license,
-//       marriage_cont: marriage_cont,
-//     },
-//     function (data) {
-//       if (jQuery.trim(data) == "success") {
-//         $("#show_wedding").modal("hide");
-//         toastAlert("success", "Appointment updated successfully.");
-//         ShowTransactionCanvas();
-//       } else {
-//         toastAlert("warning", data);
-//       }
-//     }
-//   );
-// }
-
-function UpdateWeddingForm(wedding_id) {
-  var formData = new FormData();
-  
-  formData.append("groom_firstname", $("#groom_firstname").val());
-  formData.append("groom_middlename", $("#groom_middlename").val());
-  formData.append("groom_lastname", $("#groom_lastname").val());
-  formData.append("bride_firstname", $("#bride_firstname").val());
-  formData.append("bride_middlename", $("#bride_middlename").val());
-  formData.append("bride_lastname", $("#bride_lastname").val());
-  formData.append("wedding_date", $("#wedding_date").val());
-  formData.append("timeOfWedding", $("#timeOfWedding").val());
-
-  let sponsor_arr = [];
-
-  $(".sponsor").each(function () {
-    let id = $(this).attr("counter");
-    let lastname = $("#sponsors_lastname" + id).val();
-    let firstname = $("#sponsors_firstname" + id).val();
-    let middlename = $("#sponsors_middlename" + id).val();
-
-    sponsor_arr.push({
-      id: id,
-      lastname: lastname,
-      firstname: firstname,
-      middlename: middlename,
-    });
-  });
-
-  let SponsorJson = JSON.stringify(sponsor_arr);
-  formData.append("SponsorJson", SponsorJson);
-  formData.append("wedding_id", wedding_id);
-
-  formData.append("baptismal", $("#baptismal")[0].files[0]);
-  formData.append("confirmation_cert", $("#confirmation_cert")[0].files[0]);
-  formData.append("marriage_license", $("#marriage_license")[0].files[0]);
-  formData.append("marriage_cont", $("#marriage_cont")[0].files[0]);
-
-  $.ajax({
-    url: "actions/update-wedding-form.php",
-    type: "POST",
-    data: formData,
-    contentType: false,
-    processData: false,
-    success: function (data) {
-      if (jQuery.trim(data) == "success") {
-        $("#show_wedding").modal("hide");
-        toastAlert("success", "Appointment updated successfully.");
-        ShowTransactionCanvas();
-      } else {
-        toastAlert("warning", data);
-      }
-    },
-  });
-}
-
-
 
 function SaveBaptismForm() {
   let child_firstname = $("#child_firstname").val();
@@ -209,6 +82,7 @@ function SaveBaptismForm() {
     let middlename = $("#sponsors_middlename" + id).val();
 
     sponsor_arr.push({
+      id: id,
       lastname: lastname,
       firstname: firstname,
       middlename: middlename,
@@ -382,6 +256,7 @@ function SaveBurialForm() {
     }
   );
 }
+
 function UpdateBurialForm(burial_id) {
   let dateApplied = $("#dateApplied").val();
   let contactNo = $("#contactNo").val();
@@ -455,12 +330,28 @@ function UpdateBurialForm(burial_id) {
     }
   );
 }
-function ShowBaptismModal(baptism_id, operation) {
+function ShowIntentionsModal(intention_id, booking_id, operation) {
+  // console.log(baptism_id, operation);
+  $.post(
+    "modals/intentions-form.php",
+    {
+      intention_id: intention_id,
+      booking_id: booking_id,
+      operation: operation,
+    },
+    function (data) {
+      $("#LoadIntentionsModal").html("");
+      $("#LoadIntentionsModal").html(data);
+    }
+  );
+}
+function ShowBaptismModal(baptism_id, booking_id, operation) {
   // console.log(baptism_id, operation);
   $.post(
     "modals/baptism-form.php",
     {
       baptism_id: baptism_id,
+      booking_id: booking_id,
       operation: operation,
     },
     function (data) {
@@ -469,11 +360,12 @@ function ShowBaptismModal(baptism_id, operation) {
     }
   );
 }
-function ShowBurialModal(id, operation) {
+function ShowBurialModal(id, booking_id, operation) {
   $.post(
     "modals/burial-form.php",
     {
       id: id,
+      booking_id: booking_id,
       operation: operation,
     },
     function (data) {
@@ -482,11 +374,12 @@ function ShowBurialModal(id, operation) {
     }
   );
 }
-function ShowWeddingModal(wedding_id, operation) {
+function ShowWeddingModal(wedding_id, booking_id, operation) {
   $.post(
     "modals/wedding-form.php",
     {
       wedding_id: wedding_id,
+      booking_id: booking_id,
       operation: operation,
     },
     function (data) {
@@ -496,7 +389,7 @@ function ShowWeddingModal(wedding_id, operation) {
   );
 }
 
-function EditTransaction(transaction_id, type) {
+function EditTransaction(transaction_id, booking_id, type) {
   var myModal = new bootstrap.Modal(document.getElementById(type), {
     keyboard: false,
   });
@@ -504,11 +397,13 @@ function EditTransaction(transaction_id, type) {
 
   // ShowBaptismModal(transaction_id, 1);
   if (type == "show_baptism") {
-    ShowBaptismModal(transaction_id, 1);
+    ShowBaptismModal(transaction_id, booking_id, 1);
   } else if (type == "show_burial") {
-    ShowBurialModal(transaction_id, 1);
+    ShowBurialModal(transaction_id, booking_id, 1);
   } else if (type == "show_wedding") {
-    ShowWeddingModal(transaction_id, 1);
+    ShowWeddingModal(transaction_id, booking_id, 1);
+  } else if (type == "show_intentions") {
+    ShowIntentionsModal(transaction_id, booking_id, 1);
   }
   //
 }
@@ -537,9 +432,14 @@ function SaveContactUs() {
 }
 
 var sponsor = 101001;
-function AddSponsors() {
+function AddSponsors(sacrament_type) {
+  if (sacrament_type == "Baptism") {
+    sacrament_type = "baptism_sponsor_row";
+  } else {
+    sacrament_type = "wedding_sponsor_row";
+  }
   sponsor++;
-  $("#sponsor_row").before(`
+  $("#" + sacrament_type).before(`
        <div class="row sponsor" id="Sponsor${sponsor}" counter="${sponsor}"> 
           <div class="form-group col-4">
               <label for="sponsors_firstname"></label>
@@ -554,7 +454,7 @@ function AddSponsors() {
               <input type="text" class="form-control-plaintext" id="sponsors_lastname${sponsor}" placeholder="Lastname" required>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <a class="badge bg-danger text-white text-decoration-none badge-danger "
-                  onclick="RemoveSponsor('${sponsor}',0)" title="Remove">
+                  onclick="RemoveSponsor('','','${sponsor}',0)" title="Remove">
                   <i class="fa fa-times p-1"></i>
               </a>
           </div>
@@ -563,7 +463,7 @@ function AddSponsors() {
   `);
 }
 
-function RemoveSponsor(sacrament_type,sacrament_id,id, type) {
+function RemoveSponsor(sacrament_type, sacrament_id, id, type) {
   if (type == 0) {
     $("#Sponsor" + id).remove();
   } else {
@@ -598,6 +498,346 @@ function DeleteTransaction(id, type) {
       if (jQuery.trim(data) == "success") {
         ShowTransactionCanvas();
         toastAlert("success", "Transaction deleted successfully.");
+      } else {
+        toastAlert("warning", data);
+      }
+    }
+  );
+}
+
+function SignUpModal(id, operation) {
+  $.post(
+    "login/signup-modal.php",
+    {
+      id: id,
+      operation: operation,
+    },
+    function (data) {
+      $("#LoadSignUpModal").html("");
+      $("#LoadSignUpModal").html(data);
+    }
+  );
+}
+
+function ShowSacramentRate(SacramentRate) {
+  $.post(
+    "modals/sacrament-rate.php",
+    {
+      SacramentRate: SacramentRate,
+    },
+    function (data) {
+      $("#LoadSacramentRate").html("");
+      $("#LoadSacramentRate").html(data);
+    }
+  );
+}
+
+// function ShowVerificationModal() {
+//   $.post(
+//     "modals/verification-modal.php",
+//     {
+//       // SacramentRate: SacramentRate,
+//     },
+//     function (data) {
+//       $("#LoadVerificationCode").html("");
+//       $("#LoadVerificationCode").html(data);
+//     }
+//   );
+// }
+function btnSpinner(type, btnName, btnTextLabel) {
+  const loginBtn = document.getElementById(btnName);
+  const spinner = document.getElementById("spinner");
+
+  if (type == true) {
+    const btnText = document.getElementById("btnText");
+    loginBtn.disabled = true;
+    spinner.style.display = "inline-block"; // Show spinner
+    btnText.textContent = btnTextLabel;
+  } else {
+    const btnText = document.getElementById("btnText");
+    setTimeout(() => {
+      loginBtn.disabled = false;
+      spinner.style.display = "none"; // Hide spinner
+      btnText.textContent = btnTextLabel;
+    }, 3000);
+  }
+}
+
+function BlessingsReceived() {
+  var isChecked = $("#blessings_received").prop("checked");
+  if (isChecked == true) {
+    $("#BlessingsRemarksDiv").html(`
+        <textarea class="form-control form-control-sm" name="" id="blessings_remarks" cols="30" rows="3" placeholder="Remarks"></textarea>
+      `);
+  } else {
+    $("#BlessingsRemarksDiv").html("");
+  }
+}
+function ThanksGivingOther() {
+  var isChecked = $("#t_others").prop("checked");
+  if (isChecked == true) {
+    $("#ThanksGivingRemarksDiv").html(`
+          <textarea class="form-control form-control-sm" name="" id="tg_remarks" cols="30" rows="3" placeholder="Remarks"></textarea>
+      `);
+  } else {
+    $("#ThanksGivingRemarksDiv").html("");
+  }
+}
+
+function GuidanceForTheExam() {
+  var isChecked = $("#exam_guidance").prop("checked");
+  if (isChecked == true) {
+    $("#ExamRemarksDiv").html(`
+          <textarea class="form-control form-control-sm" name="" id="exam_guidance_remarks" cols="30" rows="3" placeholder="Remarks"></textarea>
+      `);
+  } else {
+    $("#ExamRemarksDiv").html("");
+  }
+}
+
+function PetitionOther() {
+  var isChecked = $("#p_others").prop("checked");
+  if (isChecked == true) {
+    $("#PetitionGivingRemarksDiv").html(`
+          <textarea class="form-control form-control-sm" name="" id="petition_remarks" cols="30" rows="3" placeholder="Remarks"></textarea>
+      `);
+  } else {
+    $("#PetitionGivingRemarksDiv").html("");
+  }
+}
+
+function SaveIntentionsForm() {
+  let date = $("#date").val();
+  let time = $("#time").val();
+  let offered_by = $("#offered_by").val();
+  let offered_for = $("#offered_for").val();
+  let amount = $('input[name="amount"]:checked').val();
+
+  let Intentions_arr = [];
+  // THANKS GIVING
+  if ($("#birthday").is(":checked") == true) {
+    Intentions_arr.push({
+      type: "Thanksgiving",
+      name: "Birthday",
+      remarks: "-",
+    });
+  }
+
+  if ($("#wedding_anniversary").is(":checked") == true) {
+    Intentions_arr.push({
+      type: "Thanksgiving",
+      name: "Wedding Anniversary",
+      remarks: "-",
+    });
+  }
+
+  if ($("#blessings_received").is(":checked") == true) {
+    Intentions_arr.push({
+      type: "Thanksgiving",
+      name: "Blessings received",
+      remarks: $("#blessings_remarks").val() || "",
+    });
+  }
+
+  if ($("#t_others").is(":checked") == true) {
+    Intentions_arr.push({
+      type: "Thanksgiving",
+      name: "Others",
+      remarks: $("#tg_remarks").val() || "",
+    });
+  }
+
+  // SOULS
+  if ($("#soul").val() !== "") {
+    Intentions_arr.push({
+      type: "Soul",
+      name: "Soul",
+      remarks: $("#soul").val(),
+    });
+  }
+
+  // PETITIONS
+  if ($("#good_health").is(":checked") == true) {
+    Intentions_arr.push({
+      type: "Petition",
+      name: "Good Health",
+      remarks: "-",
+    });
+  }
+
+  if ($("#fast_recovery").is(":checked") == true) {
+    Intentions_arr.push({
+      type: "Petition",
+      name: "Fast Recovery",
+      remarks: "-",
+    });
+  }
+
+  if ($("#exam_guidance").is(":checked") == true) {
+    Intentions_arr.push({
+      type: "Petition",
+      name: "Guidance for the Exam",
+      remarks: $("#exam_guidance_remarks").val(),
+    });
+  }
+
+  if ($("#p_others").is(":checked") == true) {
+    Intentions_arr.push({
+      type: "Petition",
+      name: "Others",
+      remarks: $("#petition_remarks").val(),
+    });
+  }
+
+  if ($("#others").val() !== "") {
+    Intentions_arr.push({
+      type: "Other",
+      name: "Other",
+      remarks: $("#others").val(),
+    });
+  }
+
+  let IntentionsJSON = JSON.stringify(Intentions_arr);
+
+  $.post(
+    "actions/save-intentions-form.php",
+    {
+      date: date,
+      time: time,
+      offered_for: offered_for,
+      offered_by: offered_by,
+      IntentionsJSON: IntentionsJSON,
+      amount: amount,
+    },
+    function (data) {
+      if (jQuery.trim(data) == "success") {
+        $("#show_intentions").modal("hide");
+        toastAlert("success", "Intentions created successfully.");
+      } else {
+        toastAlert("warning", data);
+      }
+    }
+  );
+}
+
+function UpdateIntentionsForm(intentions_id) {
+  let date = $("#date").val();
+  let time = $("#time").val();
+  let offered_by = $("#offered_by").val();
+  let offered_for = $("#offered_for").val();
+  let amount = $('input[name="amount"]:checked').val();
+
+  let Intentions_arr = [];
+  // THANKS GIVING
+  if ($("#birthday").is(":checked") == true) {
+    Intentions_arr.push({
+      id: $("#birthday").attr("detail_id"),
+      type: "Thanksgiving",
+      name: "Birthday",
+      remarks: "-",
+    });
+  }
+
+  if ($("#wedding_anniversary").is(":checked") == true) {
+    Intentions_arr.push({
+      id: $("#wedding_anniversary").attr("detail_id"),
+      type: "Thanksgiving",
+      name: "Wedding Anniversary",
+      remarks: "-",
+    });
+  }
+
+  if ($("#blessings_received").is(":checked") == true) {
+    Intentions_arr.push({
+      id: $("#blessings_received").attr("detail_id"),
+      type: "Thanksgiving",
+      name: "Blessings received",
+      remarks: $("#blessings_remarks").val() || "",
+    });
+  }
+
+  if ($("#t_others").is(":checked") == true) {
+    Intentions_arr.push({
+      id: $("#t_others").attr("detail_id"),
+      type: "Thanksgiving",
+      name: "Others",
+      remarks: $("#tg_remarks").val() || "",
+    });
+  }
+
+  // SOULS
+  if ($("#soul").val() !== "") {
+    Intentions_arr.push({
+      id: $("#soul").attr("detail_id"),
+      type: "Soul",
+      name: "Soul",
+      remarks: $("#soul").val(),
+    });
+  }
+
+  // PETITIONS
+  if ($("#good_health").is(":checked") == true) {
+    Intentions_arr.push({
+      id: $("#good_health").attr("detail_id"),
+      type: "Petition",
+      name: "Good Health",
+      remarks: "-",
+    });
+  }
+
+  if ($("#fast_recovery").is(":checked") == true) {
+    Intentions_arr.push({
+      id: $("#fast_recovery").attr("detail_id"),
+      type: "Petition",
+      name: "Fast Recovery",
+      remarks: "-",
+    });
+  }
+
+  if ($("#exam_guidance").is(":checked") == true) {
+    Intentions_arr.push({
+      id: $("#exam_guidance").attr("detail_id"),
+      type: "Petition",
+      name: "Guidance for the Exam",
+      remarks: $("#exam_guidance_remarks").val(),
+    });
+  }
+
+  if ($("#p_others").is(":checked") == true) {
+    Intentions_arr.push({
+      id: $("#p_others").attr("detail_id"),
+      type: "Petition",
+      name: "Others",
+      remarks: $("#petition_remarks").val(),
+    });
+  }
+
+  if ($("#others").val() !== "") {
+    Intentions_arr.push({
+      id: $("#others").attr("detail_id"),
+      type: "Other",
+      name: "Other",
+      remarks: $("#others").val(),
+    });
+  }
+
+  let IntentionsJSON = JSON.stringify(Intentions_arr);
+
+  $.post(
+    "actions/update-intentions-form.php",
+    {
+      intentions_id: intentions_id,
+      date: date,
+      time: time,
+      offered_for: offered_for,
+      offered_by: offered_by,
+      IntentionsJSON: IntentionsJSON,
+      amount: amount,
+    },
+    function (data) {
+      if (jQuery.trim(data) == "success") {
+        $("#show_intentions").modal("hide");
+        toastAlert("success", "Intentions updated successfully.");
       } else {
         toastAlert("warning", data);
       }
